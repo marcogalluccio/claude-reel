@@ -1,0 +1,168 @@
+<!doctype html>
+<!--
+  HyperFrames composition TEMPLATE for the 9:16 reel graphics layer.
+  Copy it into the project's ISOLATED scaffold dir (a scratch/tmp dir, OUTSIDE your
+  repo), fill in the beats, render ONLY the graphics as a transparent PNG-sequence,
+  pack it into a qtrle .mov, then composite over the frozen base.
+
+  HyperFrames contract essentials honored here:
+    - one #root with data-composition-id / data-start / data-duration / data-width / data-height
+    - every TIMED beat is class="beat clip" with data-start + data-duration + data-track-index
+    - a SINGLE paused GSAP timeline registered on window.__timelines[<composition-id>]
+    - NO other <script> logic beyond the timeline
+
+  HARD GOTCHAS (see SKILL.md):
+    - Vendor GSAP LOCALLY (assets/gsap.min.js). Do NOT use a CDN <script src=...>.
+      Fetch it once:  curl -sL https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js -o assets/gsap.min.js
+    - Use CONCRETE font-family names ("Poppins"), never CSS vars, in font-family
+      (the renderer resolves @font-face by name, not by var()).
+    - The render output is a TRANSPARENT PNG-sequence; background MUST stay transparent.
+    - NEVER feed the PNGs straight into overlay (drops frames). Pack them into a qtrle
+      .mov first, then composite video-over-video (see compose.sh). A direct --format
+      webm render can flatten the alpha on some machines — png-sequence is the verified route.
+
+  Render command (pin the version, no --expose, local scaffold):
+    rm -rf renders/frames
+    npx --yes hyperframes@0.7.17 render . --format png-sequence -o renders/frames --fps 30 --quality high
+    ffmpeg -y -framerate 30 -start_number 1 -i "renders/frames/frame_%06d.png" -c:v qtrle renders/overlay.mov
+-->
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <!-- GSAP vendored LOCALLY (never CDN). Fetch once, see header comment. -->
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      /* Concrete font names — the renderer resolves @font-face by NAME, not var(). */
+      @font-face { font-family:"Poppins"; font-weight:400; src:url("assets/fonts/Poppins-Regular.ttf"); }
+      @font-face { font-family:"Poppins"; font-weight:500; src:url("assets/fonts/Poppins-Medium.ttf"); }
+      @font-face { font-family:"Poppins"; font-weight:600; src:url("assets/fonts/Poppins-SemiBold.ttf"); }
+      @font-face { font-family:"Poppins"; font-weight:700; src:url("assets/fonts/Poppins-Bold.ttf"); }
+      @font-face { font-family:"Poppins"; font-weight:900; src:url("assets/fonts/Poppins-Black.ttf"); }
+      * { margin:0; padding:0; box-sizing:border-box; }
+      html, body {
+        width:1080px; height:1920px; overflow:hidden; background:transparent;
+        font-family:"Poppins", sans-serif; -webkit-font-smoothing:antialiased;
+      }
+
+      /* ---- Example house palette (cream/gold) — swap for your own brand kit ---- */
+      :root{
+        --cream:#FBF7EC; --cream2:#F4EFE0; --ink:#1F1B16; --dim:#8A8170;
+        --gold:#F5A623; --red:#E5484D; --green:#2FA968; --line:#E4DDC9;
+      }
+      .beat{ position:absolute; inset:0; }
+
+      /* ===== STAGING MODE 1 — FULL-FRAME cream card (message beats) =====
+         The card carries the message; subtitles keep running (always on). */
+      .full{ background:var(--cream); }
+      .ticks::before,.ticks::after,.tick3,.tick4{ content:""; position:absolute; width:54px; height:54px; border:5px solid var(--gold); }
+      .ticks::before{ top:70px; left:70px; border-right:none; border-bottom:none; }
+      .ticks::after{ top:70px; right:70px; border-left:none; border-bottom:none; }
+      .tick3{ bottom:70px; left:70px; border-right:none; border-top:none; }
+      .tick4{ bottom:70px; right:70px; border-left:none; border-top:none; }
+      .kicker{ position:absolute; top:150px; left:0; right:0; text-align:center;
+        font-weight:700; font-size:34px; letter-spacing:6px; color:var(--gold); text-transform:uppercase; }
+
+      /* ===== STAGING MODE 2 — FLOATING card / chips over the live face =====
+         Subtitles RUN over these beats. */
+      .panel{ position:absolute; left:90px; right:90px; top:120px;
+        background:var(--cream); border-radius:36px; padding:46px 50px;
+        box-shadow:0 26px 60px rgba(0,0,0,.34); }
+      .panel .head{ font-weight:700; font-size:34px; letter-spacing:4px; color:var(--gold); text-transform:uppercase; margin-bottom:26px; }
+
+      /* ---- Component archetypes (carry these classes verbatim) ---- */
+      .row{ display:flex; align-items:center; gap:26px; }
+      .chip{ display:inline-flex; align-items:center; gap:18px; background:#fff; border:3px solid var(--line);
+        border-radius:24px; padding:22px 30px; font-weight:600; font-size:46px; color:var(--ink); position:relative; }
+      .chip .ic{ width:60px; height:60px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+        font-weight:900; font-size:34px; color:#fff; }
+      .strike{ position:absolute; left:6%; right:6%; top:50%; height:8px; background:var(--red); border-radius:6px;
+        transform-origin:left center; }                /* GSAP scaleX 0->1 wipe */
+
+      .big{ font-weight:900; font-size:120px; color:var(--ink); line-height:1.02; }
+      .big .g{ color:var(--gold); }                    /* gold payoff word */
+      .sub{ font-weight:600; font-size:48px; color:var(--dim); }
+
+      .doc{ background:#fff; border-radius:14px; box-shadow:0 18px 40px rgba(0,0,0,.28); position:relative; }
+      .ln{ height:14px; border-radius:7px; background:#D9D3C4; }   /* gold top-border on .doc = "nice" pdf */
+
+      .codewin{ position:absolute; left:90px; right:90px; top:120px; height:560px; background:#1d1b26;
+        border-radius:28px; box-shadow:0 30px 70px rgba(0,0,0,.5); overflow:hidden; }
+      .codebar{ height:64px; background:#15131c; display:flex; align-items:center; gap:16px; padding:0 28px; }
+      .dot{ width:20px; height:20px; border-radius:50%; }
+      .codebody{ padding:30px 36px; font-family:"Poppins"; font-weight:500; font-size:34px; line-height:1.5; }
+      .ctag{ color:#7aa2f7; } .cattr{ color:#bb9af7; } .cstr{ color:#9ece6a; } .ctext{ color:#c0caf5; } .ccom{ color:#565f89; }
+
+      .btn{ display:inline-flex; align-items:center; gap:20px; background:var(--gold); color:#1b1206;
+        font-weight:800; font-size:50px; border-radius:60px; padding:28px 52px; box-shadow:0 18px 40px rgba(245,166,35,.45); }
+
+      .swatch{ width:96px; height:96px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,.2); }
+      .pill{ display:inline-flex; align-items:center; gap:22px; background:var(--ink); color:#fff;
+        font-weight:800; font-size:58px; border-radius:70px; padding:30px 56px; box-shadow:0 20px 50px rgba(0,0,0,.4); }
+      .plus{ width:64px; height:64px; border-radius:50%; background:var(--gold); color:#1b1206; font-weight:900;
+        font-size:46px; display:flex; align-items:center; justify-content:center; }
+    </style>
+  </head>
+  <body>
+    <!-- Set data-duration to the FROZEN base length. width/height = 1080x1920. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="44.8" data-width="1080" data-height="1920">
+
+      <!-- ============================================================
+           BEAT TRACK — one <div class="beat clip"> per timed beat.
+           data-start / data-duration are the beat's WINDOW (output-timeline
+           seconds). data-track-index is unique & increasing.
+           Stage each beat as MODE 1 (.full + .kicker) OR
+           MODE 2 (.panel / bare chips). Compose archetypes inside.
+           ============================================================ -->
+
+      <!-- EXAMPLE — MODE 2 floating card. Replace freely. -->
+      <div id="b1" class="beat clip" data-start="0.2" data-duration="2.6" data-track-index="1">
+        <div class="panel">
+          <div class="head" id="b1h">the problem</div>
+          <div class="row" style="justify-content:space-between;">
+            <div class="chip" id="b1c1"><span class="ic" style="background:#7d2ae8;">C</span>Canva<span class="strike" id="b1s1"></span></div>
+            <div class="chip" id="b1c2"><span class="ic" style="background:#444;">▦</span>editor<span class="strike" id="b1s2"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXAMPLE — MODE 1 full-frame cream card. -->
+      <div id="b2" class="beat clip full" data-start="3.0" data-duration="3.4" data-track-index="2">
+        <div class="kicker" id="b2k">the trick</div>
+        <div style="position:absolute; left:90px; right:90px; top:680px;">
+          <div class="sub" id="b2lead" style="margin-bottom:18px;">ask it to build</div>
+          <div class="big"><span id="b2pre">first in </span><span class="g" id="b2key">HTML</span></div>
+        </div>
+      </div>
+
+      <!-- Add b3, b4, ... one per beat. Keep class="clip" on EVERY timed beat. -->
+
+    </div>
+
+    <!-- SINGLE paused timeline. No other script logic. -->
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      // Eases (house motion):
+      const EO = "power3.out";       // enters: fade + y
+      // back.out(1.6)-back.out(2)   // pops / payoff words
+      // power2.inOut                 // the .strike wipe
+
+      // --- b1 (MODE 2) ---
+      tl.from("#b1h",  {opacity:0, y:-20, duration:0.4, ease:EO}, 0.30);
+      tl.from("#b1c1", {opacity:0, x:-40, duration:0.4, ease:EO}, 0.55);
+      tl.from("#b1c2", {opacity:0, x:40,  duration:0.4, ease:EO}, 0.75);
+      tl.fromTo("#b1s1", {scaleX:0}, {scaleX:1, duration:0.35, ease:"power2.inOut"}, 1.20);
+      tl.fromTo("#b1s2", {scaleX:0}, {scaleX:1, duration:0.35, ease:"power2.inOut"}, 1.45);
+
+      // --- b2 (MODE 1) — payoff word lands on the spoken keyword ---
+      tl.from("#b2k",   {opacity:0, y:-30, duration:0.5, ease:EO}, 3.10);
+      tl.from("#b2lead",{opacity:0, y:20,  duration:0.4, ease:EO}, 3.60);
+      tl.from("#b2pre", {opacity:0, y:30,  duration:0.4, ease:EO}, 4.10);
+      tl.from("#b2key", {opacity:0, scale:0.6, duration:0.5, ease:"back.out(1.8)"}, 5.20); // payoff
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

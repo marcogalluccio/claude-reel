@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Monta i tuoi reel verticali con Claude</title>
+<style>
+  @page{size:A4;margin:0;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#2b2620;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .page{width:210mm;min-height:297mm;padding:20mm 20mm 18mm;background:#fffdf8;position:relative;}
+  .page + .page{page-break-before:always;}
+
+  /* cover header */
+  .kick{font-size:9.5pt;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#5b21b6;}
+  h1{font-size:28pt;font-weight:900;letter-spacing:-.02em;line-height:1.05;margin:9pt 0 0;}
+  h1 .g{background:linear-gradient(135deg,#2563EB,#7C3AED);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .lead{font-size:11.5pt;color:#5d5346;margin:12pt 0 0;max-width:158mm;}
+
+  .how{margin:18pt 0 0;border:1px solid #e7ddcc;border-radius:12px;overflow:hidden;}
+  .how .ht{background:linear-gradient(135deg,#2563EB,#7C3AED);color:#fff;font-weight:800;font-size:10.5pt;letter-spacing:.02em;padding:9pt 16pt;}
+  .how .steps{display:flex;}
+  .how .st{flex:1;padding:13pt 14pt;}
+  .how .st + .st{border-left:1px solid #efe7d7;}
+  .how .n{width:20pt;height:20pt;border-radius:7px;background:#ece7fb;color:#5b21b6;font-weight:900;font-size:10pt;display:flex;align-items:center;justify-content:center;margin-bottom:7pt;}
+  .how .st h3{font-size:9.5pt;font-weight:800;margin:0 0 3pt;}
+  .how .st p{font-size:8.3pt;color:#5d5346;line-height:1.4;}
+
+  /* requirements */
+  .reqs{display:flex;gap:12pt;margin-top:16pt;}
+  .reqcol{flex:1;border:1px solid #e7ddcc;border-radius:12px;padding:13pt 15pt;}
+  .reqcol .rl{font-size:8.5pt;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8pt;}
+  .reqcol.need .rl{color:#5b21b6;}
+  .reqcol.opt .rl{color:#8c8071;}
+  .reqcol ul{list-style:none;}
+  .reqcol li{font-size:9pt;color:#3f3931;margin:0 0 6pt;line-height:1.4;padding-left:13pt;position:relative;}
+  .reqcol li::before{content:"";position:absolute;left:0;top:5pt;width:6pt;height:6pt;border-radius:2pt;}
+  .reqcol.need li::before{background:#7C3AED;}
+  .reqcol.opt li::before{background:#d9d3c4;}
+  .reqcol li b{color:#2b2620;font-weight:700;}
+
+  .tag{margin:20pt 0 8pt;font-size:9.5pt;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#5b21b6;}
+  .tagsub{font-size:9.5pt;color:#8c8071;margin:0 0 10pt;}
+
+  .codebox{background:#241d33;border-radius:12px;padding:14pt 16pt;}
+  .codebox pre{font-family:'SFMono-Regular',Menlo,monospace;font-size:8pt;line-height:1.6;color:#e7e0f7;white-space:pre-wrap;}
+
+  .skill h2{font-size:13pt;font-weight:900;letter-spacing:-.01em;margin:15pt 0 6pt;color:#2b2620;}
+  .skill h2:first-child{margin-top:0;}
+  .skill h3{font-size:10.5pt;font-weight:800;margin:12pt 0 4pt;color:#241d33;}
+  .skill p{font-size:9.5pt;color:#3f3931;margin:0 0 7pt;line-height:1.5;}
+  .skill ul,.skill ol{margin:0 0 7pt;padding-left:15pt;}
+  .skill li{font-size:9.5pt;color:#3f3931;margin:0 0 4pt;line-height:1.45;}
+  .skill .note{font-size:8.5pt;color:#8c8071;font-style:italic;border-top:1px solid #e7ddcc;padding-top:9pt;margin-top:14pt;}
+  .skill code{background:#f2ecdf;border-radius:4px;padding:1px 5px;font-family:'SFMono-Regular',Menlo,monospace;font-size:8.5pt;color:#5b21b6;}
+  strong{font-weight:800;color:#2b2620;}
+
+  .foot{position:absolute;left:20mm;right:20mm;bottom:11mm;display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid #e7ddcc;padding-top:7pt;font-size:8.5pt;color:#8c8071;}
+  .foot b{color:#5d5346;font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="kick">Guida gratuita &middot; uno strumento di Marco Galluccio</div>
+  <h1>Monta i tuoi reel verticali<br>parlando con <span class="g">Claude.</span></h1>
+  <p class="lead">Registri col telefono, e un agente costruisce sopra grafiche animate a tempo con quello che dici: sottotitoli karaoke, camera move, musica ed effetti sonori. Questa guida ti dice cosa ti serve e come si parte.</p>
+
+  <div class="how">
+    <div class="ht">Come funziona, in tre passaggi</div>
+    <div class="steps">
+      <div class="st">
+        <div class="n">1</div>
+        <h3>Giri col telefono</h3>
+        <p>Un talking-head verticale, come faresti per un reel qualsiasi.</p>
+      </div>
+      <div class="st">
+        <div class="n">2</div>
+        <h3>Dici cosa vuoi a Claude</h3>
+        <p>Claude Code monta: taglia, ricuce l'audio, costruisce le grafiche sopra.</p>
+      </div>
+      <div class="st">
+        <div class="n">3</div>
+        <h3>Rivedi a blocchi</h3>
+        <p>Ogni pezzo si vede in anteprima prima del successivo: zero sorprese al render finale.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="reqs">
+    <div class="reqcol need">
+      <p class="rl">Cosa ti serve &mdash; richiesto</p>
+      <ul>
+        <li><b>Claude Code</b><br>da terminale, guida tutto il montaggio</li>
+        <li><b>Node.js + HyperFrames CLI</b><br>il motore che renderizza le grafiche animate</li>
+        <li><b>FFmpeg</b><br>taglia, compone, incolla i sottotitoli</li>
+        <li><b>Playwright</b><br>controlla le grafiche prima del render vero</li>
+      </ul>
+    </div>
+    <div class="reqcol opt">
+      <p class="rl">Opzionale &mdash; livello audio</p>
+      <ul>
+        <li><b>ElevenLabs</b><br>voce e trascrizione per i sottotitoli karaoke (piano gratuito disponibile)</li>
+        <li><b>HeyGen</b><br>musica ed effetti sonori a libreria. Senza, il reel funziona lo stesso</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot"><span>reel-con-claude.vercel.app</span><span>Guida reel verticali di <b>Marco Galluccio</b></span></div>
+</div>
+
+<div class="page">
+  <div class="tag">Il prompt di setup</div>
+  <p class="tagsub">Apri Claude Code in una cartella vuota e incolla questo. Controlla cosa hai gia installato e installa il resto, chiedendoti conferma prima di toccare qualunque cosa di globale sul tuo Mac.</p>
+
+  <div class="codebox">
+<pre>Set up https://github.com/marcogalluccio/claude-reel for me: it's a skill for
+montaging vertical 9:16 talking-head reels with an animated graphics layer.
+
+Read SKILL.md first. It needs Claude Code (already running), Node.js + the
+HyperFrames CLI (pinned version, install with npx), ffmpeg, and Playwright for
+QA screenshots before rendering. Check what's already installed on this
+machine and install what's missing, asking me before anything system-wide.
+
+The audio layer (voiceover transcription via ElevenLabs, music/SFX via
+HeyGen) is optional: ask me to paste API keys only if I want that layer, and
+skip it entirely if I don't.
+
+Once everything is ready, tell me and wait: I'll drop a talking-head clip
+into a folder and tell you what I want on top.</pre>
+  </div>
+
+  <div class="skill">
+    <h2>Cosa aspettarti dal primo montaggio</h2>
+    <p>Non e un editor con dei bottoni: e una conversazione. Alcune cose utili da sapere prima di iniziare.</p>
+
+    <h3>Si costruisce a blocchi, non tutto insieme</h3>
+    <p>Prima la base tagliata e con l'audio pulito, poi la trascrizione, poi le grafiche, poi il composito, poi i sottotitoli. Ad ogni blocco ricevi un'anteprima prima che si passi al successivo &mdash; se qualcosa non ti convince lo dici li, non alla fine.</p>
+
+    <h3>Lo stile e un punto di partenza, non un vincolo</h3>
+    <p>La skill arriva con una palette e un set di grafiche gia pronte (card, sottotitoli karaoke, camera move). Puoi cambiare colori, font e come entrano gli elementi: e la tua skill di stile, dal secondo reel riparti dalle tue scelte.</p>
+
+    <h3>Gli errori piu comuni (te li dice anche la skill)</h3>
+    <ul>
+      <li>Rendere le grafiche in un formato che perde la trasparenza: la skill sa qual e la via giusta su una macchina Mac tipica.</li>
+      <li>Muovere l'inquadratura (camera move) direttamente sul file originale invece che solo in fase di composizione: il girato originale resta sempre intatto.</li>
+      <li>Costruire una sola direzione grafica e scoprire dopo il render che non convince: la skill chiede sempre 2-3 alternative sui momenti chiave, prima di costruire.</li>
+    </ul>
+
+    <p class="note">Il repo completo (SKILL.md + script pronti) e su github.com/marcogalluccio/claude-reel, licenza MIT. Il reel in homepage e montato con questo identico metodo.</p>
+  </div>
+
+  <div class="foot"><span>reel-con-claude.vercel.app</span><span>Guida reel verticali di <b>Marco Galluccio</b></span></div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monta i tuoi reel verticali con Claude — grafiche, sottotitoli, camera move</title>
+<meta name="description" content="Registri col telefono, e un agente costruisce sopra grafiche animate a tempo, sottotitoli karaoke, camera move, musica ed effetti sonori. Skill open source per montare reel verticali con Claude Code.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%237C3AED'/><path d='M12 10l9 6-9 6z' fill='%23fff'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f0e6; --card:#fffdf8; --ink:#2b2620; --body:#5d5346; --muted:#8c8071;
+    --line:#e7ddcc; --accent:#7C3AED; --accent-d:#5b21b6; --accent-soft:#ece7fb;
+    --grad:linear-gradient(135deg,#2563EB 0%,#7C3AED 100%);
+    --shadow:0 1px 2px rgba(43,38,32,.04),0 10px 30px rgba(43,38,32,.07);
+    --shadow-lg:0 30px 80px rgba(43,38,32,.16);
+    --radius:18px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  a{color:inherit;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px;}
+  .eyebrow{font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-d);margin:0;}
+  .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+
+  /* top bar */
+  .topbar{position:sticky;top:0;z-index:40;background:rgba(246,240,230,.82);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);}
+  .topbar .row{max-width:1080px;margin:0 auto;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;}
+  .brand{font-weight:800;letter-spacing:-.01em;font-size:15.5px;}
+  .brand .dot{display:inline-block;width:8px;height:8px;border-radius:3px;background:var(--grad);margin-right:9px;vertical-align:middle;}
+  .topbar .lk{font-size:13.5px;font-weight:600;color:var(--muted);text-decoration:none;}
+  .topbar .lk:hover{color:var(--ink);}
+
+  /* hero */
+  .hero{padding:74px 0 18px;text-align:center;position:relative;overflow:hidden;}
+  .hero .deco{position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:760px;height:420px;
+    background:radial-gradient(closest-side,rgba(124,58,237,.14),transparent);pointer-events:none;}
+  .hero h1{font-size:clamp(34px,5.4vw,58px);line-height:1.02;font-weight:900;letter-spacing:-.03em;margin:14px 0 0;}
+  .hero .sub{font-size:clamp(16px,2vw,19.5px);color:var(--body);max-width:660px;margin:18px auto 0;font-weight:500;}
+  .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:30px 0 6px;}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;text-decoration:none;
+    padding:14px 24px;border-radius:13px;border:1px solid transparent;transition:transform .15s ease,box-shadow .15s ease;cursor:pointer;}
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--grad);color:#fff;box-shadow:0 10px 26px rgba(124,58,237,.32);}
+  .btn-ghost{background:var(--card);color:var(--ink);border-color:var(--line);box-shadow:var(--shadow);}
+  .btn svg{width:17px;height:17px;}
+  .hero .micro{font-size:13px;color:var(--muted);margin-top:16px;}
+  .hero .micro b{color:var(--body);font-weight:600;}
+
+  /* phone frame (9:16 reel) */
+  .phone-wrap{margin:46px auto 0;display:flex;flex-direction:column;align-items:center;gap:14px;}
+  .phone-cap{font-size:13px;color:var(--muted);font-weight:600;}
+  .phone-cap b{color:var(--accent-d);font-weight:800;}
+  .phone{width:322px;max-width:86vw;border-radius:34px;background:#100d1a;padding:9px;
+    box-shadow:var(--shadow-lg);position:relative;}
+  .phone::before{content:"";position:absolute;top:16px;left:50%;transform:translateX(-50%);
+    width:96px;height:6px;border-radius:99px;background:rgba(255,255,255,.18);z-index:3;}
+  .phone video{display:block;width:100%;aspect-ratio:9/16;border-radius:26px;background:#000;object-fit:cover;}
+
+  /* sections */
+  section.blk{padding:30px 0;}
+  .seclabel{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-d);
+    text-align:center;margin:0 0 8px;}
+  h2.sech{font-size:clamp(26px,3.4vw,36px);font-weight:900;letter-spacing:-.025em;text-align:center;margin:0 auto 8px;max-width:680px;line-height:1.08;}
+  .secsub{text-align:center;color:var(--body);max-width:600px;margin:0 auto;font-size:16px;}
+
+  /* what you get grid */
+  .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px;}
+  .fcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px 20px;box-shadow:var(--shadow);}
+  .fcard .ic{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;margin-bottom:13px;}
+  .fcard .ic svg{width:20px;height:20px;stroke:var(--accent-d);}
+  .fcard h3{margin:0 0 5px;font-size:16.5px;font-weight:800;letter-spacing:-.01em;}
+  .fcard p{margin:0;font-size:14px;color:var(--body);line-height:1.5;}
+
+  /* requirements checklist */
+  .reqwrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px;}
+  .reqcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;box-shadow:var(--shadow);}
+  .reqcard .rlbl{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin:0 0 14px;}
+  .reqcard.need .rlbl{color:var(--accent-d);}
+  .reqcard.opt .rlbl{color:var(--muted);}
+  .reqcard ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px;}
+  .reqcard li{display:flex;align-items:flex-start;gap:10px;font-size:14.5px;color:var(--ink);line-height:1.4;}
+  .reqcard li b{font-weight:700;}
+  .reqcard li span.d{display:block;font-size:13px;color:var(--body);font-weight:400;margin-top:1px;}
+  .reqcard .chk{flex:none;width:19px;height:19px;border-radius:6px;margin-top:1px;display:flex;align-items:center;justify-content:center;}
+  .reqcard.need .chk{background:var(--accent-soft);}
+  .reqcard.opt .chk{background:var(--bg);border:1px solid var(--line);}
+  .reqcard .chk svg{width:11px;height:11px;stroke:var(--accent-d);}
+  .reqnote{margin:20px auto 0;max-width:640px;text-align:center;font-size:13.5px;color:var(--muted);}
+
+  /* prompt box */
+  .promptbox{background:#241d33;border-radius:var(--radius);box-shadow:var(--shadow-lg);margin-top:26px;overflow:hidden;}
+  .promptbox .ph{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.09);}
+  .promptbox .ph .lbl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#b6a8e0;}
+  .promptbox .ph .cp{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);color:#fff;border:0;cursor:pointer;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:12.5px;padding:7px 13px;border-radius:8px;transition:background .15s;}
+  .promptbox .ph .cp:hover{background:rgba(255,255,255,.2);}
+  .promptbox pre{margin:0;padding:18px 20px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.65;
+    color:#e7e0f7;overflow-x:auto;white-space:pre-wrap;}
+
+  /* download band */
+  .dl{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 30px;box-shadow:var(--shadow);margin-top:24px;}
+  .dl .dt{flex:1;min-width:240px;}
+  .dl .dt h3{margin:0 0 4px;font-size:19px;font-weight:900;letter-spacing:-.02em;}
+  .dl .dt p{margin:0;font-size:14px;color:var(--body);}
+  .dl .btn-primary{white-space:nowrap;}
+
+  /* CTA bands */
+  .band{border-radius:22px;padding:40px 44px;margin:22px 0;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;}
+  .band.master{background:var(--grad);color:#fff;box-shadow:0 24px 60px rgba(124,58,237,.30);}
+  .band.call{background:var(--ink);color:#fff;}
+  .band .bt{flex:1;min-width:260px;}
+  .band .bl{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin:0 0 8px;}
+  .band h3{margin:0 0 7px;font-size:25px;font-weight:900;letter-spacing:-.02em;line-height:1.12;}
+  .band p{margin:0;font-size:15px;opacity:.92;line-height:1.5;max-width:520px;}
+  .band .bbtn{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:15px;text-decoration:none;
+    padding:14px 26px;border-radius:13px;white-space:nowrap;transition:transform .15s;}
+  .band .bbtn:hover{transform:translateY(-2px);}
+  .band.master .bbtn{background:#fff;color:var(--accent-d);}
+  .band.call .bbtn{background:var(--accent);color:#fff;}
+
+  /* footer */
+  footer{border-top:1px solid var(--line);margin-top:30px;padding:34px 0 50px;}
+  footer .row{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;}
+  footer .name{font-weight:800;font-size:15px;}
+  footer .links{display:flex;gap:20px;font-size:13.5px;color:var(--muted);}
+  footer .links a{text-decoration:none;}footer .links a:hover{color:var(--ink);}
+  footer .made{font-size:12.5px;color:var(--muted);}
+
+  @media(max-width:860px){
+    .feat{grid-template-columns:1fr 1fr;}
+    .reqwrap{grid-template-columns:1fr;}
+  }
+  @media(max-width:680px){
+    .wrap{padding:0 20px;}
+    .topbar .row{padding:13px 20px;}
+    .hero{padding:42px 0 6px;}
+    .hero h1{font-size:31px;line-height:1.06;}
+    .hero h1 br{display:none;}
+    .hero .sub{font-size:16px;margin-top:14px;}
+    .cta-row{flex-direction:column;align-items:stretch;gap:11px;margin-top:26px;}
+    .btn{justify-content:center;width:100%;font-size:15.5px;padding:15px 20px;}
+    .phone-wrap{margin-top:30px;}
+    section.blk{padding:26px 0;}
+    h2.sech{font-size:25px;}
+    .secsub{font-size:15px;}
+    .feat{grid-template-columns:1fr;gap:13px;margin-top:24px;}
+    .reqwrap{margin-top:24px;}
+    .dl{flex-direction:column;align-items:flex-start;padding:24px;}
+    .dl .btn-primary{width:100%;justify-content:center;}
+    .band{padding:28px 24px;border-radius:18px;flex-direction:column;align-items:flex-start;gap:18px;margin:16px 0;}
+    .band h3{font-size:22px;}
+    .band .bbtn{width:100%;justify-content:center;}
+    footer .row{flex-direction:column;align-items:flex-start;gap:14px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="row">
+    <div class="brand"><span class="dot"></span>Marco Galluccio</div>
+    <a class="lk" href="https://www.linkedin.com/in/marco-galluccio/" target="_blank" rel="noopener">LinkedIn &#8599;</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="deco"></div>
+  <div class="wrap">
+    <p class="eyebrow">Montaggio reel verticali &middot; HyperFrames &middot; open source</p>
+    <h1>Monta i tuoi reel verticali <br>parlando con <span class="grad-text">Claude.</span></h1>
+    <p class="sub">Registri col telefono, e un agente costruisce sopra grafiche animate a tempo con quello che dici: sottotitoli karaoke, camera move, musica ed effetti sonori.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="guida/claude-reel-guida.pdf" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+        Scarica la guida (PDF)
+      </a>
+      <a class="btn btn-ghost" href="#come">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l3 3-3 3M13 15h3M4 5h16a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg>
+        Come si fa
+      </a>
+    </div>
+    <p class="micro">Gratis e open source &middot; <b>setup reale, non zero-click</b> &middot; cosa serve, qui sotto</p>
+  </div>
+
+  <div class="phone-wrap">
+    <p class="phone-cap">Il reel qui sotto e <b>montato cosi</b>. Premi play.</p>
+    <div class="phone">
+      <video controls playsinline preload="none" poster="examples/cover.png">
+        <source src="examples/novita-app-claude-web.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</header>
+
+<!-- WHAT YOU GET -->
+<section class="blk wrap">
+  <p class="seclabel">Cosa fa per te</p>
+  <h2 class="sech">Dal girato col telefono al reel pronto</h2>
+  <div class="feat">
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg></div>
+      <h3>Grafiche a tempo</h3>
+      <p>Card, mockup e cifre entrano una alla volta, esattamente sulla parola che stai dicendo. Mai un pannello che si assembla tutto insieme.</p>
+    </div>
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15h4M14 15h3M7 11h10"/></svg></div>
+      <h3>Sottotitoli karaoke</h3>
+      <p>Parola per parola, si accende quella che stai pronunciando in quel momento. Sincronizzati sull'audio vero, non a occhio.</p>
+    </div>
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+      <h3>Camera move</h3>
+      <p>Zoom digitali che seguono il ritmo del parlato: push sul payoff, respiro sulla battuta. Il girato resta fermo, si muove solo l'inquadratura.</p>
+    </div>
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12h3l2-7 4 14 2-9 2 5h5"/></svg></div>
+      <h3>Musica + effetti sonori</h3>
+      <p>Un letto musicale sotto voce e un effetto a ogni cambio di grafica, dosati apposta per non coprire mai quello che dici.</p>
+    </div>
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z"/></svg></div>
+      <h3>La tua skill di stile</h3>
+      <p>Dal secondo reel riparti dalle tue scelte (palette, font, come entrano le card). Non da zero, mai piu.</p>
+    </div>
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 010 20 15 15 0 010-20z"/></svg></div>
+      <h3>Gratis e open source</h3>
+      <p>Il motore e HyperFrames (open source) + ffmpeg + Playwright. La guida e gratis, il codice della skill pure.</p>
+    </div>
+  </div>
+</section>
+
+<!-- REQUIREMENTS (honest) -->
+<section class="blk wrap" id="come">
+  <p class="seclabel">Cosa ti serve</p>
+  <h2 class="sech">Onestamente: non e zero-setup</h2>
+  <p class="secsub">A differenza di altre skill che ti mando (i PDF, ad esempio, li fai senza installare niente), qui costruisci un vero layer di grafica animata: serve un ambiente di render. Ecco cosa ti serve, in chiaro, prima di iniziare.</p>
+
+  <div class="reqwrap">
+    <div class="reqcard need">
+      <p class="rlbl">Richiesto</p>
+      <ul>
+        <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
+          <span><b>Claude Code</b> — da terminale, e' l'agente che guida tutto il montaggio</span></li>
+        <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
+          <span><b>Node.js + HyperFrames CLI</b> — il motore che renderizza le grafiche animate</span></li>
+        <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
+          <span><b>FFmpeg</b> — taglia, compone il video finale, incolla i sottotitoli</span></li>
+        <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
+          <span><b>Playwright</b> — controlla che le grafiche siano giuste prima del render vero</span></li>
+      </ul>
+    </div>
+    <div class="reqcard opt">
+      <p class="rlbl">Opzionale (livello audio)</p>
+      <ul>
+        <li><span class="chk"></span>
+          <span><b>ElevenLabs</b><span class="d">Voce e trascrizione parola-per-parola per i sottotitoli karaoke. Ha un piano gratuito.</span></span></li>
+        <li><span class="chk"></span>
+          <span><b>HeyGen</b><span class="d">Musica ed effetti sonori a libreria. Se salti questo, il reel funziona lo stesso, solo senza audio extra.</span></span></li>
+      </ul>
+    </div>
+  </div>
+  <p class="reqnote">Non hai gia questi strumenti? Il prompt di setup qui sotto li controlla e li installa lui, uno alla volta, chiedendoti conferma prima di toccare niente di globale.</p>
+
+  <div class="promptbox">
+    <div class="ph">
+      <span class="lbl">Prompt di setup &middot; incollalo in Claude Code</span>
+      <button class="cp" id="copyBtn" type="button">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
+        <span id="copyLbl">Copia</span>
+      </button>
+    </div>
+    <pre id="prompt">Set up https://github.com/marcogalluccio/claude-reel for me: it's a skill for
+montaging vertical 9:16 talking-head reels with an animated graphics layer.
+
+Read SKILL.md first. It needs Claude Code (already running), Node.js + the
+HyperFrames CLI (pinned version, install with npx), ffmpeg, and Playwright for
+QA screenshots before rendering. Check what's already installed on this
+machine and install what's missing, asking me before anything system-wide.
+
+The audio layer (voiceover transcription via ElevenLabs, music/SFX via
+HeyGen) is optional: ask me to paste API keys only if I want that layer, and
+skip it entirely if I don't.
+
+Once everything is ready, tell me and wait: I'll drop a talking-head clip
+into a folder and tell you what I want on top.</pre>
+  </div>
+
+  <div class="dl">
+    <div class="dt">
+      <h3>Preferisci un file da tenere?</h3>
+      <p>La guida completa in PDF: cosa ti serve, il metodo a blocchi con preview ad ogni passo, gli archetipi di grafica gia pronti, gli errori che costano un render intero.</p>
+    </div>
+    <a class="btn btn-primary" href="guida/claude-reel-guida.pdf" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+      Scarica la guida (PDF)
+    </a>
+  </div>
+</section>
+
+<!-- CTA: MASTER CLAUDE -->
+<section class="wrap">
+  <div class="band master">
+    <div class="bt">
+      <p class="bl">Master Claude</p>
+      <h3>Vuoi imparare a costruire cose cosi?</h3>
+      <p>Questo reel nasce da un metodo: una conversazione con Claude, una cartella, zero editor tradizionale. Nel corso Master Claude te lo insegno dal vivo, partendo da zero.</p>
+    </div>
+    <a class="bbtn" href="https://masterclaude.school" target="_blank" rel="noopener">Scopri il corso &#8594;</a>
+  </div>
+
+  <!-- CTA: CALL -->
+  <div class="band call">
+    <div class="bt">
+      <p class="bl">Per la tua azienda</p>
+      <h3>Stai esplorando l'AI agentica?</h3>
+      <p>Se vuoi capire come l'AI agentica puo entrare nel tuo lavoro o nel tuo team, facciamoci una call. Vediamo insieme da dove partire.</p>
+    </div>
+    <a class="bbtn" href="https://calendar.app.google/CouGDyZM5QfJgguM7" target="_blank" rel="noopener">Prenota una call &#8594;</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap row">
+    <div class="name">Marco Galluccio</div>
+    <div class="links">
+      <a href="https://www.linkedin.com/in/marco-galluccio/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/marcogalluccio/claude-reel" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/heygen-com/hyperframes" target="_blank" rel="noopener">HyperFrames</a>
+      <a href="guida/claude-reel-guida.pdf" download>Guida PDF</a>
+    </div>
+    <div class="made">Made with Claude</div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var btn=document.getElementById('copyBtn'),lbl=document.getElementById('copyLbl'),
+        src=document.getElementById('prompt');
+    if(!btn)return;
+    btn.addEventListener('click',function(){
+      var t=src.innerText;
+      navigator.clipboard.writeText(t).then(function(){
+        lbl.textContent='Copiato';setTimeout(function(){lbl.textContent='Copia';},1600);
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
