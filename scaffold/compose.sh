@@ -31,8 +31,8 @@ MOV="$(dirname "$FRAMES")/overlay.mov"
 # touch the dir mtime -> stale overlay.mov silently reused).
 PNGS=$(find "$FRAMES" -name 'frame_*.png' | wc -l | tr -d ' ')
 [ "$PNGS" -gt 0 ] || { echo "ERROR: no frame_*.png in $FRAMES" >&2; exit 1; }
-ffmpeg -y -framerate 30 -start_number 1 -frames:v "$PNGS" \
-  -i "$FRAMES/frame_%06d.png" -c:v qtrle "$MOV"
+ffmpeg -y -framerate 30 -start_number 1 \
+  -i "$FRAMES/frame_%06d.png" -frames:v "$PNGS" -c:v qtrle "$MOV"
 
 # sanity: mov frame count MUST match png count (this is the dropped-frames guard)
 MOVF=$(ffprobe -v error -select_streams v -count_frames -show_entries stream=nb_read_frames -of csv=p=0 "$MOV")

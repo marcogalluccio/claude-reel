@@ -14,6 +14,8 @@
   HARD GOTCHAS (see SKILL.md):
     - Vendor GSAP LOCALLY (assets/gsap.min.js). Do NOT use a CDN <script src=...>.
       Fetch it once:  curl -sL https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js -o assets/gsap.min.js
+    - Poppins TTFs go under assets/fonts/ (not vendored here). Fetch once:
+      mkdir -p assets/fonts && for w in Regular Medium SemiBold Bold Black; do curl -sL "https://raw.githubusercontent.com/google/fonts/main/ofl/poppins/Poppins-$w.ttf" -o "assets/fonts/Poppins-$w.ttf"; done
     - Use CONCRETE font-family names ("Poppins"), never CSS vars, in font-family
       (the renderer resolves @font-face by name, not by var()).
     - The render output is a TRANSPARENT PNG-sequence; background MUST stay transparent.

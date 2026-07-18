@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Monta i tuoi reel verticali con Claude — grafiche, sottotitoli, camera move</title>
+<title>Monta i tuoi reel verticali con Claude: grafiche, sottotitoli, camera move</title>
 <meta name="description" content="Registri col telefono, e un agente costruisce sopra grafiche animate a tempo, sottotitoli karaoke, camera move, musica ed effetti sonori. Skill open source per montare reel verticali con Claude Code.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%237C3AED'/><path d='M12 10l9 6-9 6z' fill='%23fff'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -192,7 +192,7 @@
   </div>
 
   <div class="phone-wrap">
-    <p class="phone-cap">Il reel qui sotto e <b>montato cosi</b>. Premi play.</p>
+    <p class="phone-cap">Il reel qui sotto è <b>montato così</b>. Premi play.</p>
     <div class="phone">
       <video controls playsinline preload="none" poster="examples/cover.png">
         <source src="examples/novita-app-claude-web.mp4" type="video/mp4">
@@ -229,12 +229,12 @@
     <div class="fcard">
       <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z"/></svg></div>
       <h3>La tua skill di stile</h3>
-      <p>Dal secondo reel riparti dalle tue scelte (palette, font, come entrano le card). Non da zero, mai piu.</p>
+      <p>Dal secondo reel riparti dalle tue scelte (palette, font, come entrano le card). Non da zero, mai più.</p>
     </div>
     <div class="fcard">
       <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 010 20 15 15 0 010-20z"/></svg></div>
       <h3>Gratis e open source</h3>
-      <p>Il motore e HyperFrames (open source) + ffmpeg + Playwright. La guida e gratis, il codice della skill pure.</p>
+      <p>Il motore è HyperFrames (open source) + ffmpeg + Playwright. La guida è gratis, il codice della skill pure.</p>
     </div>
   </div>
 </section>
@@ -242,7 +242,7 @@
 <!-- REQUIREMENTS (honest) -->
 <section class="blk wrap" id="come">
   <p class="seclabel">Cosa ti serve</p>
-  <h2 class="sech">Onestamente: non e zero-setup</h2>
+  <h2 class="sech">Onestamente: non è zero-setup</h2>
   <p class="secsub">A differenza di altre skill che ti mando (i PDF, ad esempio, li fai senza installare niente), qui costruisci un vero layer di grafica animata: serve un ambiente di render. Ecco cosa ti serve, in chiaro, prima di iniziare.</p>
 
   <div class="reqwrap">
@@ -250,26 +250,26 @@
       <p class="rlbl">Richiesto</p>
       <ul>
         <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
-          <span><b>Claude Code</b> — da terminale, e' l'agente che guida tutto il montaggio</span></li>
+          <span><b>Claude Code</b>: da terminale, è l'agente che guida tutto il montaggio</span></li>
         <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
-          <span><b>Node.js + HyperFrames CLI</b> — il motore che renderizza le grafiche animate</span></li>
+          <span><b>Node.js + HyperFrames CLI</b>: il motore che renderizza le grafiche animate</span></li>
         <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
-          <span><b>FFmpeg</b> — taglia, compone il video finale, incolla i sottotitoli</span></li>
+          <span><b>FFmpeg</b>: taglia, compone il video finale, incolla i sottotitoli</span></li>
         <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
-          <span><b>Playwright</b> — controlla che le grafiche siano giuste prima del render vero</span></li>
+          <span><b>Playwright</b>: controlla che le grafiche siano giuste prima del render vero</span></li>
       </ul>
     </div>
     <div class="reqcard opt">
       <p class="rlbl">Opzionale (livello audio)</p>
       <ul>
         <li><span class="chk"></span>
-          <span><b>ElevenLabs</b><span class="d">Voce e trascrizione parola-per-parola per i sottotitoli karaoke. Ha un piano gratuito.</span></span></li>
+          <span><b>ElevenLabs</b><span class="d">Trascrizione parola per parola per i sottotitoli karaoke e la sincronizzazione delle grafiche. Ha un piano gratuito; in alternativa funziona anche Whisper in locale, gratis.</span></span></li>
         <li><span class="chk"></span>
           <span><b>HeyGen</b><span class="d">Musica ed effetti sonori a libreria. Se salti questo, il reel funziona lo stesso, solo senza audio extra.</span></span></li>
       </ul>
     </div>
   </div>
-  <p class="reqnote">Non hai gia questi strumenti? Il prompt di setup qui sotto li controlla e li installa lui, uno alla volta, chiedendoti conferma prima di toccare niente di globale.</p>
+  <p class="reqnote">Non hai già questi strumenti? Il prompt di setup qui sotto li controlla e li installa lui, uno alla volta, chiedendoti conferma prima di toccare niente di globale.</p>
 
   <div class="promptbox">
     <div class="ph">
@@ -298,7 +298,7 @@ into a folder and tell you what I want on top.</pre>
   <div class="dl">
     <div class="dt">
       <h3>Preferisci un file da tenere?</h3>
-      <p>La guida completa in PDF: cosa ti serve, il metodo a blocchi con preview ad ogni passo, gli archetipi di grafica gia pronti, gli errori che costano un render intero.</p>
+      <p>La guida completa in PDF: cosa ti serve, il metodo a blocchi con preview ad ogni passo, gli archetipi di grafica già pronti, gli errori che costano un render intero.</p>
     </div>
     <a class="btn btn-primary" href="guida/claude-reel-guida.pdf" download>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
@@ -312,7 +312,7 @@ into a folder and tell you what I want on top.</pre>
   <div class="band master">
     <div class="bt">
       <p class="bl">Master Claude</p>
-      <h3>Vuoi imparare a costruire cose cosi?</h3>
+      <h3>Vuoi imparare a costruire cose così?</h3>
       <p>Questo reel nasce da un metodo: una conversazione con Claude, una cartella, zero editor tradizionale. Nel corso Master Claude te lo insegno dal vivo, partendo da zero.</p>
     </div>
     <a class="bbtn" href="https://masterclaude.school" target="_blank" rel="noopener">Scopri il corso &#8594;</a>
@@ -323,7 +323,7 @@ into a folder and tell you what I want on top.</pre>
     <div class="bt">
       <p class="bl">Per la tua azienda</p>
       <h3>Stai esplorando l'AI agentica?</h3>
-      <p>Se vuoi capire come l'AI agentica puo entrare nel tuo lavoro o nel tuo team, facciamoci una call. Vediamo insieme da dove partire.</p>
+      <p>Se vuoi capire come l'AI agentica può entrare nel tuo lavoro o nel tuo team, facciamoci una call. Vediamo insieme da dove partire.</p>
     </div>
     <a class="bbtn" href="https://calendar.app.google/CouGDyZM5QfJgguM7" target="_blank" rel="noopener">Prenota una call &#8594;</a>
   </div>

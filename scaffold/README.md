@@ -11,6 +11,13 @@ subtitles). Copy these into the project's ISOLATED scaffold dir (a scratch/tmp d
 | `compose.sh` | pack + composite | `BASE` / frames dir / `OUT` paths (packs `renders/frames` into qtrle `overlay.mov`, asserts the frame count, composites video-over-video) |
 | `compose_zoom.template.sh` | composite with camera moves | `BASE`, the `Z` segments; takes the qtrle `overlay.mov` as arg 1 |
 | `build_subs.py` | subtitles (LAST) | `FONTDIR`, `TOTAL`, the `CUES` list (subs are ALWAYS ON — never suppress on cream) |
+| `qa_composition.py` | pre-render QA | the probe times (payoff moments) — run BEFORE every render: serves the dir over 127.0.0.1, seeks the paused timeline, screenshots each state into `qa/` (catches invisible elements, wrong positions, face overlaps in ~30s instead of a burned render) |
+
+Poppins fetch (Regular/Medium/SemiBold/Bold/Black), needed by `composition.template.html` and `build_subs.py`:
+
+```bash
+mkdir -p assets/fonts && for w in Regular Medium SemiBold Bold Black; do curl -sL "https://raw.githubusercontent.com/google/fonts/main/ofl/poppins/Poppins-$w.ttf" -o "assets/fonts/Poppins-$w.ttf"; done
+```
 
 Render the graphics (pinned, no `--expose`, from the scaffold dir; ALWAYS wipe the
 frames dir first — leftovers from a longer previous render would be packed into the tail):

@@ -126,7 +126,9 @@ HyperFrames graphics layer  →  PNG-sequence  →  qtrle overlay.mov (alpha)
   up gold (using ASR word timestamps). Single-track pipeline: 1 PNG-strip per word-state → concat
   demuxer → qtrle alpha track → **ONE overlay** on the composite (~2 min; an N-chained
   `overlay=enable='between(t,…)'` approach costs ~30 min per render). `scaffold/build_subs.py` ships
-  the simple static variant; the karaoke variant follows the same single-track qtrle pattern.
+  the simple static variant only — the karaoke variant is not shipped as a script in this repo; write
+  it yourself starting from that file, following the same single-track qtrle pattern (1 PNG-strip per
+  word-state → concat demuxer → qtrle → ONE overlay).
 
 ## Plan gates — BEFORE building (what makes the first cut good)
 
@@ -159,10 +161,23 @@ open the file in the player and send a compressed copy in chat if useful.
    — per-second peaks at full scale (≥ -0.2 dB) mean the mic clipped at recording and denoise
    will NOT remove the distortion: put `adeclip` as the FIRST filter of the audio chain
    (before highpass/arnndn).
+
+   **Phone footage → frozen base (the first mile).** Typical phone footage is 4K HEVC, sometimes
+   HDR, not yet the 1080×1920 SDR the base needs — normalize it before cutting:
+   `ffmpeg -i phone.mov -vf "scale=1080:1920:flags=lanczos" -c:v libx264 -crf 18 -preset medium -c:a aac -b:a 192k base_raw.mp4`.
+   If the source is HDR (colors look washed out after a plain scale), insert a tonemap chain BEFORE
+   the scale: `zscale=t=linear:npl=100,tonemap=hable,zscale=p=bt709:t=bt709:m=bt709,format=yuv420p`
+   (needs an ffmpeg built with zimg — the Homebrew build has it). A clip already shot vertical 9:16
+   only needs the scale; a 16:9 clip needs a crop to the subject first (`crop=ih*9/16:ih`). From
+   `base_raw.mp4`, the cut + audio chain above (adeclip if clipped, highpass/arnndn/loudnorm)
+   produces the frozen base. This is exactly the kind of normalization work to hand to Claude Code
+   in conversation, not to do by hand.
 2. **Transcribe the OUTPUT base itself** for output-timeline word stamps. Use a word-timestamp ASR
-   service (this pipeline was built against ElevenLabs Scribe). Note: pass **no keyterm list** —
-   sending the default keyterm list makes Scribe return HTTP 400, so disable it (`--no-keyterms` or
-   the equivalent for your client).
+   service (this pipeline was built against ElevenLabs Scribe); a free, no-API-key alternative is a
+   local Whisper with word timestamps enabled (`openai-whisper`, or `mlx-whisper` on Apple Silicon —
+   both support a word-timestamps option and work fine for this purpose). Note: pass **no keyterm
+   list** — sending the default keyterm list makes Scribe return HTTP 400, so disable it
+   (`--no-keyterms` or the equivalent for your client).
 3. **Author the HyperFrames composition** from `scaffold/composition.template.html` (house style).
    Scaffold in an **ISOLATED dir OUTSIDE your repo** (a scratch/tmp dir). **Pin** `hyperframes@0.7.17`.
    **Vendor GSAP LOCALLY** (not CDN). Render **graphics ONLY** as a PNG-sequence, then pack it

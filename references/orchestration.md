@@ -60,8 +60,10 @@ ffmpeg -y -i zoomed.mp4 \
   `speed-change.md`.
 - Zoom expression: generate the piecewise-smoothstep `z` with a small python (SEGS list → nested
   ifs), don't hand-write it. Place releases SPANNING every base jump cut to mask them.
-- Karaoke: retranscribe the FINAL base (disable keyterms; set the transcript language), rebuild the
-  track with the project's `build_subs_karaoke*.py` (params: transcript path, END, SPEED).
+- Karaoke: retranscribe the FINAL base (disable keyterms; set the transcript language), then rebuild
+  the track with a karaoke builder you write yourself — the repo ships only the static variant
+  (`scaffold/build_subs.py`); follow the single-track qtrle pattern described in SKILL.md
+  (Subtitles section), exposing transcript path, END, and SPEED as parameters.
 
 ## Verification checklist (before delivering)
 

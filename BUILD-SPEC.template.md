@@ -54,4 +54,4 @@
 - PIL subs: `scaffold/build_subs.py` (last step, fixed y, gold keyword, continuous — never
   suppressed).
 - Preview-gate per block (base → graphics → composite → subs). Save the composition into `edit/`.
-- Fallback: all-PIL pipeline in `scaffold/fallback-pil/`.
+- Fallback: all-PIL pipeline (no scaffold shipped — see SKILL.md, Fallback section, for the shape of that pipeline).

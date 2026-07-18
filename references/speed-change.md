@@ -36,8 +36,9 @@ speech scales identically.
 
 ## 3. Karaoke subtitles
 
-The karaoke builder already has the knob: set `SPEED = k` and `END = old_end / k`, rebuild the
-track (`--track-only`), overlay at y=1420 as usual. Word times are divided by SPEED internally.
+The karaoke builder you wrote yourself (see SKILL.md, Subtitles section — the repo ships only the
+static `scaffold/build_subs.py`) needs a `SPEED` knob: divide word times by `SPEED = k`, set
+`END = old_end / k`, rebuild the track (`--track-only`), overlay at y=1420 as usual.
 
 ## 4. Verify
 
