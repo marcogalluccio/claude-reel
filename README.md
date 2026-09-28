@@ -8,8 +8,8 @@ Non e zero-setup come altre skill: serve un vero ambiente di render (Claude Code
 HyperFrames CLI, ffmpeg, Playwright; opzionale ElevenLabs/HeyGen per l'audio). Il sito spiega
 tutto in chiaro.
 
-- **Sito:** https://reel-con-claude.vercel.app
-- **Guida PDF:** https://reel-con-claude.vercel.app/guida/claude-reel-guida.pdf
+- **Sito:** https://marcogalluccio.com/claude-reel/
+- **Guida PDF:** https://marcogalluccio.com/claude-reel/guida/claude-reel-guida.pdf
 - **Motore:** https://github.com/heygen-com/hyperframes
 
 ## Come si parte
